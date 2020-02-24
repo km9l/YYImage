@@ -2799,6 +2799,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     objc_setAssociatedObject(self, @selector(yy_isDecodedForDisplay), @(isDecodedForDisplay), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+#if TARGET_OS_IOS &&  __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
 - (PHAsset *)_getAssetFromlocalIdentifier:(NSString *)localIdentifier{
     if(localIdentifier == nil){
         NSLog(@"Cannot get asset from localID because it is nil");
@@ -2810,6 +2811,7 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     }
     return nil;
 }
+#endif
 
 - (void)yy_saveToAlbumWithCompletionBlock:(void(^)(BOOL success, id asset)) completionBlock {
 #if TARGET_OS_IOS
