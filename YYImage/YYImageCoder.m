@@ -17,7 +17,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #if TARGET_OS_IOS
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_9_0
 #import <AssetsLibrary/AssetsLibrary.h>
+#else
+#import <Photos/Photos.h>
+#endif
 #endif
 #import <objc/runtime.h>
 #import <pthread.h>
@@ -2795,21 +2799,65 @@ CGImageRef YYCGImageCreateWithWebPData(CFDataRef webpData,
     objc_setAssociatedObject(self, @selector(yy_isDecodedForDisplay), @(isDecodedForDisplay), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (void)yy_saveToAlbumWithCompletionBlock:(void(^)(NSURL *assetURL, NSError *error))completionBlock {
+- (PHAsset *)_getAssetFromlocalIdentifier:(NSString *)localIdentifier{
+    if(localIdentifier == nil){
+        NSLog(@"Cannot get asset from localID because it is nil");
+        return nil;
+    }
+    PHFetchResult *result = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
+    if(result.count){
+        return result[0];
+    }
+    return nil;
+}
+
+- (void)yy_saveToAlbumWithCompletionBlock:(void(^)(BOOL success, id asset)) completionBlock {
 #if TARGET_OS_IOS
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData *data = [self _yy_dataRepresentationForSystem:YES];
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_9_0
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         [library writeImageDataToSavedPhotosAlbum:data metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
+            BOOL success = YES;
+            PHAsset *asset = nil;
+            if (error) {
+                success = NO;
+            } else {
+                PHFetchResult *result = [PHAsset fetchAssetsWithALAssetURLs:@[assetURL] options:nil];
+                asset = [result firstObject];
+            }
+            
             if (!completionBlock) return;
             if (pthread_main_np()) {
-                completionBlock(assetURL, error);
+                completionBlock(success, asset);
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(assetURL, error);
+                    completionBlock(success, asset);
                 });
             }
         }];
+        #else
+        __block PHObjectPlaceholder *placeholderAsset=nil;
+        [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+            if (@available(iOS 9, *)) {
+                PHAssetCreationRequest *newAssetRequest = [PHAssetCreationRequest creationRequestForAsset];
+                [newAssetRequest addResourceWithType:PHAssetResourceTypePhoto data:data options:nil];
+                placeholderAsset = newAssetRequest.placeholderForCreatedAsset;
+            } else {
+                PHAssetChangeRequest *newAssetRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:[UIImage imageWithData:data]];
+                placeholderAsset = newAssetRequest.placeholderForCreatedAsset;
+            }
+        } completionHandler:^(BOOL success, NSError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (success) {
+                    PHAsset *asset = [self _getAssetFromlocalIdentifier:placeholderAsset.localIdentifier];
+                    if (completionBlock) completionBlock(YES, asset);
+                } else {
+                    if (completionBlock) completionBlock(NO, nil);
+                }
+            });
+        }];
+        #endif
     });
 #else
     NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : @"yy_saveToAlbumWithCompletionBlock failed: operation unavailable on Apple TV." };
