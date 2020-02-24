@@ -91,7 +91,7 @@ image.currentIsPlayingAnimation;
 NSData *data = [NSData dataWithContentsOfFile:@"/tmp/image.webp"];
 YYImageDecoder *decoder = [YYImageDecoder decoderWithData:data scale:2.0];
 UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
-	
+
 // Progressive:
 NSMutableData *data = [NSMutableData new];
 YYImageDecoder *decoder = [[YYImageDecoder alloc] initWithScale:2.0];
@@ -115,7 +115,7 @@ YYImageEncoder *jpegEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeJP
 jpegEncoder.quality = 0.9;
 [jpegEncoder addImage:image duration:0];
 NSData jpegData = [jpegEncoder encode];
- 
+
 // Encode animated image:
 YYImageEncoder *webpEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeWebP];
 webpEncoder.loopCount = 5;
@@ -128,10 +128,10 @@ NSData webpData = [webpEncoder encode];
 ### Image type detection
 ```objc
 // Get image type from image data
-YYImageType type = YYImageDetectType(data); 
+YYImageType type = YYImageDetectType(data);
 if (type == YYImageTypePNG) ...
 ```
-	
+
 Installation
 ==============
 
@@ -145,7 +145,7 @@ Installation
 
 ### Carthage
 
-1. Add `github "ibireme/YYImage"` to your Cartfile.
+1. Add `github "YYKits/YYImage"` to your Cartfile.
 2. Run `carthage update --platform ios` and add the framework to your project.
 3. Import \<YYImage/YYImage.h\>.
 4. Notice: carthage framework doesn't include WebP component, if you want to support WebP format, use CocoaPods or install manually.
@@ -286,7 +286,7 @@ image.currentIsPlayingAnimation;
 NSData *data = [NSData dataWithContentsOfFile:@"/tmp/image.webp"];
 YYImageDecoder *decoder = [YYImageDecoder decoderWithData:data scale:2.0];
 UIImage image = [decoder frameAtIndex:0 decodeForDisplay:YES].image;
-	
+
 // 渐进式图片解码 (可用于图片下载显示):
 NSMutableData *data = [NSMutableData new];
 YYImageDecoder *decoder = [[YYImageDecoder alloc] initWithScale:2.0];
@@ -310,7 +310,7 @@ YYImageEncoder *jpegEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeJP
 jpegEncoder.quality = 0.9;
 [jpegEncoder addImage:image duration:0];
 NSData jpegData = [jpegEncoder encode];
- 
+
 // 编码动态图 (支持 GIF/APNG/WebP):
 YYImageEncoder *webpEncoder = [[YYImageEncoder alloc] initWithType:YYImageTypeWebP];
 webpEncoder.loopCount = 5;
@@ -319,13 +319,13 @@ webpEncoder.loopCount = 5;
 [webpEncoder addImage:image2 duration:0.2];
 NSData webpData = [webpEncoder encode];
 ```
-	
+
 ### 图片类型探测
 ```objc
 // 获取图片类型
-YYImageType type = YYImageDetectType(data); 
+YYImageType type = YYImageDetectType(data);
 if (type == YYImageTypePNG) ...
-```	
+```
 
 安装
 ==============
@@ -340,7 +340,7 @@ if (type == YYImageTypePNG) ...
 
 ### Carthage
 
-1. 在 Cartfile 中添加 `github "ibireme/YYImage"`。
+1. 在 Cartfile 中添加 `github "YYKits/YYImage"`。
 2. 执行 `carthage update --platform ios` 并将生成的 framework 添加到你的工程。
 3. 导入 \<YYImage/YYImage.h\>。
 4. 注意：carthage framework 并没有包含 WebP 组件。如果你需要支持 WebP，可以用 CocoaPods 安装，或者手动安装。
