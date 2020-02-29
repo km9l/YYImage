@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'YYImage'
   s.summary      = 'Image framework for iOS to display/encode/decode animated WebP, APNG, GIF, and more.'
-  s.version      = '1.1.1'
+  s.version      = '1.1.2'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.authors      = { 'ibireme' => 'ibireme@gmail.com' }
   s.social_media_url = 'http://blog.ibireme.com'
@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
     core.source_files = 'YYImage/*.{h,m}'
     core.public_header_files = 'YYImage/*.{h}'
     core.libraries = 'z'
-    core.tvos.frameworks = 'UIKit', 'CoreFoundation', 'QuartzCore', 'ImageIO', 'Accelerate', 'MobileCoreServices'
-    core.ios.frameworks = 'UIKit', 'CoreFoundation', 'QuartzCore', 'AssetsLibrary', 'ImageIO', 'Accelerate', 'MobileCoreServices'
+    core.tvos.frameworks = 'UIKit', 'CoreFoundation', 'QuartzCore', 'ImageIO', 'Accelerate', 'CoreServices'
+    core.ios.frameworks = 'UIKit', 'CoreFoundation', 'QuartzCore', 'ImageIO', 'Accelerate', 'CoreServices'
   end
 
   s.subspec 'WebP' do |webp|
