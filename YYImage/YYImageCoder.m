@@ -15,7 +15,13 @@
 #import <ImageIO/ImageIO.h>
 #import <Accelerate/Accelerate.h>
 #import <QuartzCore/QuartzCore.h>
+
+#if __has_include(<MobileCoreServices/MobileCoreServices.h>)
+#import <MobileCoreServices/MobileCoreServices.h>
+#else
 #import <CoreServices/CoreServices.h>
+#endif
+
 #if TARGET_OS_IOS
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_9_0
 #import <AssetsLibrary/AssetsLibrary.h>
