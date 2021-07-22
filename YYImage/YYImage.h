@@ -60,6 +60,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable YYImage *)imageWithData:(NSData *)data scale:(CGFloat)scale;
 
 /**
+ Force the number of loops the animation should perform, overriding intrinsic loop count
+ decoded from image.
+ 
+ @param animatedImageLoopCount Desired loop count.
+ */
+- (void)setAnimatedImageLoopCount:(NSUInteger)animatedImageLoopCount;
+
+/**
  If the image is created from data or file, then the value indicates the data type.
  */
 @property (nonatomic, readonly) YYImageType animatedImageType;

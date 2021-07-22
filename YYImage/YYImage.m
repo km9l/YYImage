@@ -89,6 +89,8 @@ static CGFloat _NSStringPathScale(NSString *string) {
     NSArray *_preloadedFrames;
     dispatch_semaphore_t _preloadedLock;
     NSUInteger _bytesPerFrame;
+    BOOL _isForcingLoopCount;
+    NSUInteger _forcedLoopCount;
 }
 
 + (YYImage *)imageNamed:(NSString *)name {
@@ -163,6 +165,8 @@ static CGFloat _NSStringPathScale(NSString *string) {
             _animatedImageMemorySize = _bytesPerFrame * decoder.frameCount;
         }
         self.yy_isDecodedForDisplay = YES;
+        _isForcingLoopCount = NO;
+        _forcedLoopCount = 0;
     }
     return self;
 }
@@ -192,6 +196,11 @@ static CGFloat _NSStringPathScale(NSString *string) {
             dispatch_semaphore_signal(_preloadedLock);
         }
     }
+}
+
+- (void)setAnimatedImageLoopCount:(NSUInteger)animatedImageLoopCount {
+    _isForcingLoopCount = YES;
+    _forcedLoopCount = animatedImageLoopCount;
 }
 
 #pragma mark - protocol NSCoding
@@ -227,7 +236,7 @@ static CGFloat _NSStringPathScale(NSString *string) {
 }
 
 - (NSUInteger)animatedImageLoopCount {
-    return _decoder.loopCount;
+    return _isForcingLoopCount ? _forcedLoopCount : _decoder.loopCount;
 }
 
 - (NSUInteger)animatedImageBytesPerFrame {
